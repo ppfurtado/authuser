@@ -9,10 +9,10 @@ import java.util.UUID;
 public class UserDto {
 
     public interface  UserView {
-        public static interface RegistrationPost{}
-        public static interface UserPut{}
-        public static interface PasswordPut{}
-        public static interface ImagePut{}
+        interface RegistrationPost{}
+        interface UserPut{}
+        interface PasswordPut{}
+        interface ImagePut{}
 
     }
 
