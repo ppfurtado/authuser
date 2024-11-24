@@ -6,6 +6,10 @@ import com.ead.authuser.services.UserServices;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,8 +31,9 @@ public class UserController {
     private final UserServices userServices;
 
     @GetMapping
-    public ResponseEntity<List<UserModel>> getAllUser() {
-        return ResponseEntity.ok(userServices.findAll());
+    public ResponseEntity<Page<UserModel>> getAllUser(@PageableDefault(page = 0, size = 10, sort = "userId",
+            direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(userServices.findAll(pageable));
     }
 
     @GetMapping("/{userId}")
