@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,8 @@ import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -35,7 +38,13 @@ public class UserController {
     public ResponseEntity<Page<UserModel>> getAllUser(SpecificationTemplate.UserSpec spec,
                                                       @PageableDefault(page = 0, size = 5, sort = "userId",
             direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(userServices.findAll(spec ,pageable));
+        Page<UserModel> usersUserModels = userServices.findAll(spec, pageable);
+        if (!usersUserModels.isEmpty()) {
+            for (UserModel userModel : usersUserModels) {
+                userModel.add(WebMvcLinkBuilder.linkTo(methodOn(UserController.class).getOneUser(userModel.getUserId())).withSelfRel());
+            }
+        }
+        return ResponseEntity.ok(usersUserModels);
     }
 
     @GetMapping("/{userId}")
